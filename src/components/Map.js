@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withGoogleMap, GoogleMap, withScriptjs, InfoWindow, Marker } from "react-google-maps";
 import Geocode from "react-geocode";
 import Autocomplete from "react-google-autocomplete";
-
+Geocode.setApiKey( "AIzaSyBjner6-36Kzwp2IwKRRtWjRIXM7OetWLc" );
 Geocode.enableDebug();
 
 class Map extends Component{
@@ -108,6 +108,42 @@ class Map extends Component{
 	onInfoWindowClose = ( event ) => {
 	};
 
+	onSubmit = (event) => {
+		if(event) event.preventDefault();
+    	const enteredAddress = this.refs.enteredAddress.value;
+		Geocode.fromAddress(enteredAddress).then(
+			response => {
+			  if(response){
+				const address = response.results[0].formatted_address,
+				addressArray =  response.results[0].address_components,
+				city = this.getCity( addressArray ),
+				area = this.getArea( addressArray ),
+				state = this.getState( addressArray );
+						
+				const { lat, lng } = response.results[0].geometry.location;
+				this.setState({
+						address: ( address ) ? address : '',
+						area: ( area ) ? area : '',
+						city: ( city ) ? city : '',
+						state: ( state ) ? state : '',
+
+						markerPosition: {
+							lat: lat,
+							lng: lng
+						},
+						mapPosition: {
+							lat: lat,
+							lng: lng
+						}
+				})
+			  }
+			},
+			error => {
+			  console.error(error);
+			}
+		);
+	}
+
 
 	
 	onMarkerDragEnd = ( event ) => {
@@ -187,7 +223,7 @@ class Map extends Component{
 						</InfoWindow>
 						{/*Marker*/}
 						<Marker google={this.props.google}
-						        name={'Dolores park'}
+						        name={'current location'}
 						        draggable={true}
 						        onDragEnd={ this.onMarkerDragEnd }
 						        position={{ lat: this.state.markerPosition.lat, lng: this.state.markerPosition.lng }}
@@ -203,7 +239,7 @@ class Map extends Component{
 								marginBottom: '500px'
 							}}
 							onPlaceSelected={ this.onPlaceSelected }
-							types={['(address)']}
+							types={[]}
 						/>
 					</GoogleMap>
 				)
@@ -229,10 +265,15 @@ class Map extends Component{
 						<label htmlFor="">Address</label>
 						<input type="text" name="address" className="form-control" onChange={ this.onChange } readOnly="readOnly" value={ this.state.address }/>
 					</div>
+
+					<form onSubmit={this.onSubmit}>
+          				<input placeholder="enter address" ref="enteredAddress" />
+          				<input type="submit" value="Submit Address" />
+       				</form>
 				</div>
 
 				<AsyncMap
-					googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW25x2zAGlMyCh4Zqh8ivanyrnIliCl2o&libraries=places"
+					googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjner6-36Kzwp2IwKRRtWjRIXM7OetWLc&libraries=places"
 					loadingElement={
 						<div style={{ height: `100%` }} />
 					}
