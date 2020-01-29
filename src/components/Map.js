@@ -273,7 +273,7 @@ class Map extends Component{
 				</div>
 
 				<AsyncMap
-					googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjner6-36Kzwp2IwKRRtWjRIXM7OetWLc&libraries=places"
+					googleMapURL="https://maps.googleapis.com/maps/api/js?key=&libraries=places"
 					loadingElement={
 						<div style={{ height: `100%` }} />
 					}
